@@ -8,6 +8,8 @@ const password = "password"; // your password here
 // update rate in minutes
 const update_rate = 5;
 
+// Top Bar Text
+const BigText = "( ◑‿◑)ɔ┏🍟--🍔┑٩(^◡^ )"
 
 async function getCurrentPage() {
   const url = "https://www.yupparaj.ac.th/canteen/login.php"
@@ -167,7 +169,7 @@ async function createWidget() {
   const topColor = Color.dynamic(new Color("#3b82f6"), new Color("#60a5fa"));
   const expColor = Color.dynamic(new Color("#ef4444"), new Color("#f87171"));
   
-  var heading1 = listWidget.addText("( ◑‿◑)ɔ┏🍟--🍔┑٩(^◡^ )");
+  var heading1 = listWidget.addText(BigText);
   heading1.font = Font.boldSystemFont(24);
   heading1.textColor = headingColor;
   
