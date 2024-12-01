@@ -9,7 +9,7 @@ const password = "password"; // your password here
 const update_rate = 5;
 
 // Top Bar Text
-const BigText = "( ◑‿◑)ɔ┏🍟--🍔┑٩(^◡^ )"
+const BigText = "( ◑‿◑)ɔ┏🍟--🍔┑٩(^◡^ )";
 
 async function getCurrentPage() {
   const url = "https://www.yupparaj.ac.th/canteen/login.php"
