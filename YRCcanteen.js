@@ -2,7 +2,7 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: cyan; icon-glyph: magic;
 
-const username = "username"; // your username here
+const username = "user เช่น 55000"; // your username here
 const password = "password"; // your password here
 
 // update rate in minutes
@@ -42,7 +42,7 @@ async function getCSRF(html) {
   
   const jsGetCSRF = `
   document
-  	.getElementsByName('csrf_token')[0]
+   .getElementsByName('csrf_token')[0]
     .value
   `
   const CSRF = await webView.evaluateJavaScript(jsGetCSRF);
@@ -64,9 +64,9 @@ async function Login(cookie, csrf_token) {
     "Cookie": `PHPSESSID=${cookie}`,
   }
   
-  request.body = `username=${username}&password=${password}&csrf_token=${csrf_token}&Login=`
+  request.body = username=${username}&password=${password}&csrf_token=${csrf_token}&Login=
   
-	const response = await request.loadString();
+ const response = await request.loadString();
   
   if (request.response.statusCode === 200) {
     return [response, request.response];
@@ -87,7 +87,7 @@ async function Logout(cookie) {
     "Cookie": `PHPSESSID=${cookie}`,
   }
   
-	var response = await request.loadString();
+ var response = await request.loadString();
   
   log(response);
 }
@@ -96,7 +96,7 @@ async function Logout(cookie) {
 function getValueNumber(number) {
   return `
   document
-  	.getElementsByClassName('inner')[${number}]
+   .getElementsByClassName('inner')[${number}]
     .getElementsByTagName('h3')[0]
     .textContent
   `;
@@ -125,32 +125,32 @@ function parseValue(value) {
 }
 
 async function getInfo() {
-	let [a, b, c] = await getCurrentPage();
-	//log(b);
+ let [a, b, c] = await getCurrentPage();
+ //log(b);
 
-	const session = c.cookies.find(cookie => cookie.name === "PHPSESSID").value;
+ const session = c.cookies.find(cookie => cookie.name === "PHPSESSID").value;
   
   //await Logout(session);
   //a = 1;
 
-	log(session);
+ log(session);
 
-	if (a === 1) {
-  	const csrf = await getCSRF(b);
-  	[b, c] = await Login(session, csrf);
-  	a = 2;
-	}
+ if (a === 1) {
+   const csrf = await getCSRF(b);
+   [b, c] = await Login(session, csrf);
+   a = 2;
+ }
 
-	let [bal, top, exp] = ["0", "0", "0"];
-	if (a === 2) {
-  	[bal, top, exp] = await getValues(b);
+ let [bal, top, exp] = ["0", "0", "0"];
+ if (a === 2) {
+   [bal, top, exp] = await getValues(b);
     bal = Number(parseValue(bal).toFixed(2)).toString();
     top = Number(parseValue(top).toFixed(2)).toString();
     exp = Number(parseValue(exp).toFixed(2)).toString();
-  	log(bal);
-  	log(top);
-  	log(exp);
-	}
+   log(bal);
+   log(top);
+   log(exp);
+ }
   
   return [bal, top, exp];
 }
@@ -167,9 +167,13 @@ async function createWidget() {
   const topColor = Color.dynamic(new Color("#3b82f6"), new Color("#60a5fa"));
   const expColor = Color.dynamic(new Color("#ef4444"), new Color("#f87171"));
   
-  var heading = listWidget.addText("🍽️ YRC Canteen");
-  heading.font = Font.boldSystemFont(24);
-  heading.textColor = headingColor;
+  var heading1 = listWidget.addText("( ◑‿◑)ɔ┏🍟--🍔┑٩(^◡^ )");
+  heading1.font = Font.boldSystemFont(24);
+  heading1.textColor = headingColor;
+  
+  var heading2 = listWidget.addText("Original by Boatkungg | Modified by @sh1nxzql7");
+  heading2.font = Font.boldSystemFont(8);
+  heading2.textColor = headingColor;
   
   listWidget.addSpacer();
   
@@ -195,7 +199,7 @@ async function createWidget() {
   expStack.centerAlignContent();
   
   
-	var balanceHeading = balStack.addText("💰 คงเหลือ");
+ var balanceHeading = balStack.addText("💰 Balance");
   balanceHeading.centerAlignText();
   balanceHeading.font = Font.lightSystemFont(18);
   balanceHeading.textColor = textColor;
@@ -208,7 +212,7 @@ async function createWidget() {
   balance.textColor = balColor;
   
   
-  var topUpHeading = topStack.addText("📊 ยอดเติม");
+  var topUpHeading = topStack.addText("📊 Lifetime");
   topUpHeading.centerAlignText();
   topUpHeading.font = Font.lightSystemFont(18);
   topUpHeading.textColor = textColor;
@@ -221,7 +225,7 @@ async function createWidget() {
   topUp.textColor = topColor;
   
   
-  var expenseHeading = expStack.addText("💸 ซื้ออาหาร");
+  var expenseHeading = expStack.addText("💸 Spent");
   expenseHeading.centerAlignText();
   expenseHeading.font = Font.lightSystemFont(18);
   expenseHeading.textColor = textColor;
