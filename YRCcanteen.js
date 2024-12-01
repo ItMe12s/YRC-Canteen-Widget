@@ -66,7 +66,7 @@ async function Login(cookie, csrf_token) {
     "Cookie": `PHPSESSID=${cookie}`,
   }
   
-  request.body = username=${username}&password=${password}&csrf_token=${csrf_token}&Login=
+  request.body = `username=${username}&password=${password}&csrf_token=${csrf_token}&Login=`
   
  const response = await request.loadString();
   
