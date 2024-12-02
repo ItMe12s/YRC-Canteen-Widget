@@ -2,8 +2,8 @@
 // These must be at the very top of the file. Do not edit.
 // icon-color: cyan; icon-glyph: magic;
 
-const username = "55339"; // your username here
-const password = "06603"; // your password here
+const username = "user"; // your username here
+const password = "pass"; // your password here
 
 // update rate in minutes
 const update_rate = 5;
@@ -41,9 +41,7 @@ async function getCSRF(html) {
 
 	await webView.loadHTML(html);
 
-	const jsGetCSRF = `
-    document.getElementsByName('csrf_token')[0].value
-    `
+	const jsGetCSRF = 'document.getElementsByName("csrf_token")[0].value'
 	const CSRF = await webView.evaluateJavaScript(jsGetCSRF);
 
 	return CSRF
