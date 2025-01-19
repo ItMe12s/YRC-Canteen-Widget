@@ -42,16 +42,16 @@ async function checkForUpdate() {
 	const req = new Request(url);
 	const versionData = await req.loadJSON();
 	const latestVersion = versionData.version;
-
+	// set this to the latest version to ignore updates
 	const currentVersion = "1.0.0";
 
 	if (currentVersion !== latestVersion) {
 		const updateUrl = "https://github.com/ItMe12s/YRC-Canteen-Widget/releases";
 		const alert = new Alert();
 		alert.title = "Update Available";
-		alert.message = `A new version (${latestVersion}) is available. Visit GitHub to update.`;
-		alert.addAction("Go to GitHub");
-		alert.addCancelAction("Cancel");
+		alert.message = "A new version (${latestVersion}) is available. Visit GitHub to update.";
+		alert.addAction("Open Github");
+		alert.addCancelAction("No thanks");
 		const response = await alert.present();
 
 		if (response === 0) {
