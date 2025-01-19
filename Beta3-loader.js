@@ -33,7 +33,7 @@ const numberSize = 24;
 const Include_Comma = false;
 
 // GitHub raw URL
-const GITHUB_RAW_URL = "https://raw.githubusercontent.com/username/repository/branch/path/to/widget.js";
+const GITHUB_RAW_URL = "https://raw.githubusercontent.com/ItMe12s/YRC-Canteen-Widget/refs/heads/main/Beta3-code.js";
 
 // Loader function to fetch and execute the code
 async function loadWidgetCode() {
