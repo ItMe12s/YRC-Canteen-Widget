@@ -1,18 +1,20 @@
-// CODE
-// please use the latest on github repo.
+// Variables used by Scriptable.
+// These must be at the very top of the file. Do not edit.
+// icon-color: cyan; icon-glyph: magic;
 
-// page info login/main/etc.
-async function getCurrentPage() {
-	const request = new Request(LOGIN_URL);
+// IMPORTANT SETTINGS
+// The settings and variables are now dynamically loaded from the config.
+
+async function getCurrentPage(config) {
+	const request = new Request(config.LOGIN_URL);
 	const response = await request.loadString();
 
 	if (request.response.statusCode === 200) {
 		const currentURL = request.response.url;
-		//throw new Error(currentURL);
 		var currentPage = 0;
-		if (currentURL === INFO_URL) {
+		if (currentURL === config.INFO_URL) {
 			currentPage = 2;
-		} else if (currentURL === LOGIN_URL) {
+		} else if (currentURL === config.LOGIN_URL) {
 			currentPage = 1;
 		} else {
 			return undefined;
@@ -24,7 +26,6 @@ async function getCurrentPage() {
 	return undefined;
 }
 
-// simple
 async function getCSRF(html) {
 	const webView = new WebView();
 	await webView.loadHTML(html);
@@ -35,16 +36,14 @@ async function getCSRF(html) {
 	return CSRF;
 }
 
-// to-do, add relogin failsafe
-async function Login(cookie, csrf_token) {
-	const request = new Request(LOGIN_API);
+async function Login(config, cookie, csrf_token) {
+	const request = new Request(config.LOGIN_API);
 	request.method = "POST";
-	// throw new Error(csrf_token);
 
 	request.headers = {
 		"Cookie": `PHPSESSID=${cookie}`,
-	}
-	request.body = `username=${username}&password=${password}&csrf_token=${csrf_token}&Login=`;
+	};
+	request.body = `username=${config.username}&password=${config.password}&csrf_token=${csrf_token}&Login=`;
 
 	const response = await request.loadString();
 
@@ -55,24 +54,21 @@ async function Login(cookie, csrf_token) {
 	return undefined;
 }
 
-// Go to logout/reset cookie
-async function Logout(cookie) {
-	const request = new Request(LOGOUT_URL);
+async function Logout(config, cookie) {
+	const request = new Request(config.LOGOUT_URL);
 	request.method = "POST";
 
 	request.headers = {
 		"Cookie": `PHPSESSID=${cookie}`,
-	}
+	};
 	var response = await request.loadString();
 	log(response);
 }
 
-// good now
 function getValueNumber(number) {
 	return `document.getElementsByClassName('inner')[${number}].getElementsByTagName('h3')[0].textContent`;
 }
 
-// call getValueNumber then return an array.
 async function getValues(html) {
 	const webView = new WebView();
 	await webView.loadHTML(html);
@@ -89,34 +85,32 @@ async function getValues(html) {
 	return [balance, topUp, expense];
 }
 
-// Remove comma and other stuff (none rn)
-function parseValue(value) {
-	if (Include_Comma == true) {
+function parseValue(config, value) {
+	if (config.Include_Comma == true) {
 		return value;
 	} else {
 		return parseFloat(value.replace(",", ""));
 	}
 }
 
-// balance info table
-async function getInfo() {
-	let [a, b, c] = await getCurrentPage();
+async function getInfo(config) {
+	let [a, b, c] = await getCurrentPage(config);
 
 	const session = c.cookies.find(cookie => cookie.name === "PHPSESSID").value;
 	log(session);
 
-	if (a === 1) { // stict
+	if (a === 1) {
 		const csrf = await getCSRF(b);
-		[b, c] = await Login(session, csrf);
+		[b, c] = await Login(config, session, csrf);
 		a = 2;
 	}
 
 	let [bal, top, exp] = ["0", "0", "0"];
 	if (a === 2) {
 		[bal, top, exp] = await getValues(b);
-		bal = Number(parseValue(bal).toFixed(2)).toString();
-		top = Number(parseValue(top).toFixed(2)).toString();
-		exp = Number(parseValue(exp).toFixed(2)).toString();
+		bal = Number(parseValue(config, bal).toFixed(2)).toString();
+		top = Number(parseValue(config, top).toFixed(2)).toString();
+		exp = Number(parseValue(config, exp).toFixed(2)).toString();
 		log(bal);
 		log(top);
 		log(exp);
@@ -125,27 +119,24 @@ async function getInfo() {
 	return [bal, top, exp];
 }
 
-// MAIN ENTRY POINT
-async function createWidget() {
+async function createWidget(config) {
 	let listWidget = new ListWidget();
-	listWidget.refreshAfterDate = new Date(Date.now() + 60000 * update_rate);
+	listWidget.refreshAfterDate = new Date(Date.now() + 60000 * config.update_rate);
 
-	const [bal, top, exp] = await getInfo();
+	const [bal, top, exp] = await getInfo(config);
 
-	// DISPLAY COLOR
 	const headingColor = Color.dynamic(Color.black(), Color.white());
 	const textColor = Color.dynamic(Color.darkGray(), Color.lightGray());
 	const balColor = Color.dynamic(new Color("#10b981"), new Color("34d399"));
 	const topColor = Color.dynamic(new Color("#3b82f6"), new Color("#60a5fa"));
 	const expColor = Color.dynamic(new Color("#ef4444"), new Color("#f87171"));
 
-	// TITLE AND TEXT CONFIG
-	var heading1 = listWidget.addText(Title);
-	heading1.font = Font.boldSystemFont(titleSize);
+	var heading1 = listWidget.addText(config.Title);
+	heading1.font = Font.boldSystemFont(config.titleSize);
 	heading1.textColor = headingColor;
 
-	var heading2 = listWidget.addText(SubText);
-	heading2.font = Font.boldSystemFont(subtextSize);
+	var heading2 = listWidget.addText(config.SubText);
+	heading2.font = Font.boldSystemFont(config.subtextSize);
 	heading2.textColor = headingColor;
 
 	listWidget.addSpacer();
@@ -154,69 +145,64 @@ async function createWidget() {
 
 	listWidget.addSpacer(12);
 
-	// BALANCE STACK
 	const balStack = stack.addStack();
 	balStack.layoutVertically();
 	balStack.topAlignContent();
 
 	stack.addSpacer();
 
-	// TOP STACK
 	const topStack = stack.addStack();
 	topStack.layoutVertically();
 	topStack.centerAlignContent();
 
 	stack.addSpacer();
 
-	// EXPENSE STACK
 	const expStack = stack.addStack();
 	expStack.layoutVertically();
 	expStack.centerAlignContent();
 
-	// Balance display
 	var balanceHeading = balStack.addText("💰 Balance");
 	balanceHeading.centerAlignText();
-	balanceHeading.font = Font.lightSystemFont(listtextSize);
+	balanceHeading.font = Font.lightSystemFont(config.listtextSize);
 	balanceHeading.textColor = textColor;
 
 	balStack.addSpacer(4);
 
 	var balance = balStack.addText(bal);
 	balance.centerAlignText();
-	balance.font = Font.lightSystemFont(numberSize);
+	balance.font = Font.lightSystemFont(config.numberSize);
 	balance.textColor = balColor;
 
-	// Top up display
 	var topUpHeading = topStack.addText("📊 Top-Up");
 	topUpHeading.centerAlignText();
-	topUpHeading.font = Font.lightSystemFont(listtextSize);
+	topUpHeading.font = Font.lightSystemFont(config.listtextSize);
 	topUpHeading.textColor = textColor;
 
 	topStack.addSpacer(4);
 
 	var topUp = topStack.addText(top);
 	topUp.centerAlignText();
-	topUp.font = Font.lightSystemFont(numberSize);
+	topUp.font = Font.lightSystemFont(config.numberSize);
 	topUp.textColor = topColor;
 
-	// expense display
 	var expenseHeading = expStack.addText("💸 Expense");
 	expenseHeading.centerAlignText();
-	expenseHeading.font = Font.lightSystemFont(listtextSize);
+	expenseHeading.font = Font.lightSystemFont(config.listtextSize);
 	expenseHeading.textColor = textColor;
 
 	expStack.addSpacer(4);
 
 	var expense = expStack.addText(exp);
 	expense.centerAlignText();
-	expense.font = Font.lightSystemFont(numberSize);
+	expense.font = Font.lightSystemFont(config.numberSize);
 	expense.textColor = expColor;
 
-	// END OF MAIN
 	return listWidget;
 }
 
-let widget = await createWidget();
+// Start the widget
+const config = await loadWidgetConfig(); // Load config dynamically from GitHub
+const widget = await createWidget(config);
 if (config.runsInWidget) {
 	Script.setWidget(widget);
 } else {
