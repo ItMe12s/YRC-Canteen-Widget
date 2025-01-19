@@ -190,6 +190,8 @@ async function getInfo() {
 async function createWidget() {
 	let listWidget = new ListWidget();
 	listWidget.refreshAfterDate = new Date(Date.now() + 60000 * update_rate);
+	// UPDATE CHECK STARTS HERE!!!
+	checkForUpdate();
 
 	const [bal, top, exp] = await getInfo();
 
