@@ -3,8 +3,8 @@
 // icon-color: cyan; icon-glyph: magic;
 
 // IMPORTANT SETTINGS
-const username = "user"; // your username here
-const password = "pass"; // your password here
+const username = "00000"; // your username here
+const password = "12345"; // your password here
 
 // URL AND API ENDPOINTS, change if yrc update in the future.
 // url
@@ -33,7 +33,34 @@ const numberSize = 24;
 const Include_Comma = false;
 
 // CODE
+// DO NOT MODIFY IF YOUR DON'T KNOW WHAT YOU'RE DOING.
 // please use the latest on github repo.
+
+// can bypass.
+async function checkForUpdate() {
+	const url = "https://raw.githubusercontent.com/ItMe12s/YRC-Canteen-Widget/refs/heads/main/version.json";
+	const req = new Request(url);
+	const versionData = await req.loadJSON();
+	const latestVersion = versionData.version;
+
+	const currentVersion = "1.0.0";
+
+	if (currentVersion !== latestVersion) {
+		const updateUrl = "https://github.com/yourusername/yourrepo/releases";
+		const alert = new Alert();
+		alert.title = "Update Available";
+		alert.message = `A new version (${latestVersion}) is available. Visit GitHub to update.`;
+		alert.addAction("Go to GitHub");
+		alert.addCancelAction("Cancel");
+		const response = await alert.present();
+
+		if (response === 0) {
+			Safari.open(updateUrl);
+		}
+	} else {
+		console.log("You are using the latest version.");
+	}
+}
 
 // page info login/main/etc.
 async function getCurrentPage() {
@@ -251,7 +278,6 @@ async function createWidget() {
 }
 
 let widget = await createWidget();
-
 if (config.runsInWidget) {
 	Script.setWidget(widget);
 } else {
