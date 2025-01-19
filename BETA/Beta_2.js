@@ -46,7 +46,7 @@ async function checkForUpdate() {
 	const currentVersion = "1.0.0";
 
 	if (currentVersion !== latestVersion) {
-		const updateUrl = "https://github.com/yourusername/yourrepo/releases";
+		const updateUrl = "https://github.com/ItMe12s/YRC-Canteen-Widget/releases";
 		const alert = new Alert();
 		alert.title = "Update Available";
 		alert.message = `A new version (${latestVersion}) is available. Visit GitHub to update.`;
