@@ -8,5 +8,8 @@ Original: https://github.com/Boatkungg/YRC-Canteen-Widget
 Currently being tested and demo by my friends
 Check the Beta#.js files to see some experimental stuff
 
+⚠️ Light mode support (Partial)
+✅ Dark mode support (Full/Default)
+
 # Images below
 ![Dark Mode](images/dark.png)
