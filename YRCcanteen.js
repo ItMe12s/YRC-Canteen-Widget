@@ -29,7 +29,7 @@ const subtextSize = 8;
 const listtextSize = 18;
 const numberSize = 24;
 
-// Comma filter
+// Comma filter, Currently broken.
 const Include_Comma = false;
 
 // CODE
