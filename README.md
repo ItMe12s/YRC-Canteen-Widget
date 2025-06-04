@@ -14,3 +14,4 @@ Check the Beta#.js files to see some experimental stuff.
 
 # Images below
 ![Dark Mode](images/dark.png)
+![Mini config](images/IMG_2828.png)
