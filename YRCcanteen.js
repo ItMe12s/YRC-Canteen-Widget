@@ -3,53 +3,63 @@
 // icon-color: cyan; icon-glyph: magic;
 
 // IMPORTANT SETTINGS
+// Fill this out to use the widget!
 const username = "05000"; // your username here
 const password = "12345"; // your password here
 
-// URL AND API ENDPOINTS, change if yrc update in the future.
-// url
+// Top bar text and customization
+const Title = "💳 YRC Canteen Widget";
+const SubText = "┬┴┬┴┤(·_├┬┴┬┴";
+// ยอดเงิน -> ยอดรวม -> ใช้ไป
+const BalanceText = "💰 Balance";
+const TopUpText = "📊 Top-Up";
+const ExpenseText = "💸 Expense";
+
+// What to show and hide!
+const Show_Balance = true;
+const Show_TopUp = true;
+const Show_Expense = true;
+
+// Top row font size
+const titleSize = 24;
+const subtextSize = 12;
+// Text and display font size
+const listtextSize = 18;
+const numberSize = 24;
+
+// Comma filter, unused/broken right now.
+const Include_Comma = false;
+
+// CODE
+// DO NOT MODIFY IF YOU DON'T KNOW WHAT YOU'RE DOING.
+// please use the latest version on github repo.
+
+// URL AND API ENDPOINTS, change if yrc updates in the future.
+// Url
 const LOGIN_URL = "https://www.yupparaj.ac.th/canteen/login.php";
 const LOGOUT_URL = "https://www.yupparaj.ac.th/canteen/logout.php";
 const INFO_URL = "https://www.yupparaj.ac.th/canteen/index.php";
 const REPORT_URL = "https://www.yupparaj.ac.th/canteen/report.php"; // to-do update 2.0
-// api
+// Api
 const LOGIN_API = "https://www.yupparaj.ac.th/canteen/api/login.php";
 
-// update rate in minutes; Keep above 1 min.
+// Update rate in minutes; Keep above 1 min.
 const update_rate = 5;
 
-// Top Bar Text and customization
-const Title = "💳";
-const SubText = "┬┴┬┴┤(·_├┬┴┬┴";
-
-// font size
-const titleSize = 26;
-const subtextSize = 8;
-// text and display font size
-const listtextSize = 18;
-const numberSize = 24;
-
-// Comma filter, Currently broken.
-const Include_Comma = false;
-
-// CODE
-// DO NOT MODIFY IF YOUR DON'T KNOW WHAT YOU'RE DOING.
-// please use the latest on github repo.
-
-// can bypass.
+// Can bypass
 async function checkForUpdate() {
 	const url = "https://raw.githubusercontent.com/ItMe12s/YRC-Canteen-Widget/refs/heads/main/version.json";
 	const req = new Request(url);
 	const versionData = await req.loadJSON();
 	const latestVersion = versionData.version;
-	// set this to the latest version to ignore updates
+	// Set this to the latest version to ignore updates
 	const currentVersion = "1.0.0";
 
 	if (currentVersion !== latestVersion) {
 		const updateUrl = "https://github.com/ItMe12s/YRC-Canteen-Widget/releases";
 		const alert = new Alert();
 		alert.title = "Update Available";
-		alert.message = "A new version (${latestVersion}) is available. Visit GitHub to update.";
+		alert.message = "A new version (" + latestVersion +") is available. Visit GitHub to update.";
 		alert.addAction("Open Github");
 		alert.addCancelAction("No thanks");
 		const response = await alert.present();
@@ -62,14 +72,14 @@ async function checkForUpdate() {
 	}
 }
 
-// page info login/main/etc.
+// Page info login/main/etc.
 async function getCurrentPage() {
 	const request = new Request(LOGIN_URL);
 	const response = await request.loadString();
 
 	if (request.response.statusCode === 200) {
 		const currentURL = request.response.url;
-		//throw new Error(currentURL);
+// 		throw new Error(currentURL);
 		var currentPage = 0;
 		if (currentURL === INFO_URL) {
 			currentPage = 2;
@@ -85,7 +95,7 @@ async function getCurrentPage() {
 	return undefined;
 }
 
-// simple
+// Php identifier
 async function getCSRF(html) {
 	const webView = new WebView();
 	await webView.loadHTML(html);
@@ -100,7 +110,7 @@ async function getCSRF(html) {
 async function Login(cookie, csrf_token) {
 	const request = new Request(LOGIN_API);
 	request.method = "POST";
-	// throw new Error(csrf_token);
+// 	throw new Error(csrf_token);
 
 	request.headers = {
 		"Cookie": `PHPSESSID=${cookie}`,
@@ -124,16 +134,16 @@ async function Logout(cookie) {
 	request.headers = {
 		"Cookie": `PHPSESSID=${cookie}`,
 	}
-	var response = await request.loadString();
-	//log(response);
+// 	var response = await request.loadString();
+// 	log(response);
 }
 
-// good now
+// Helper function to extract data
 function getValueNumber(number) {
 	return `document.getElementsByClassName('inner')[${number}].getElementsByTagName('h3')[0].textContent`;
 }
 
-// call getValueNumber then return an array.
+// Call getValueNumber then return an array.
 async function getValues(html) {
 	const webView = new WebView();
 	await webView.loadHTML(html);
@@ -150,7 +160,7 @@ async function getValues(html) {
 	return [balance, topUp, expense];
 }
 
-// Remove comma and other stuff (none rn)
+// Remove comma and other stuff (none right now)
 function parseValue(value) {
 	if (Include_Comma == true) {
 		return value;
@@ -159,7 +169,7 @@ function parseValue(value) {
 	}
 }
 
-// balance info table
+// Balance info table
 async function getInfo() {
 	let [a, b, c] = await getCurrentPage();
 
@@ -175,16 +185,16 @@ async function getInfo() {
 	let [bal, top, exp] = ["0", "0", "0"];
 	if (a === 2) {
 		[bal, top, exp] = await getValues(b);
-		bal = Number(parseValue(bal).toFixed(2)).toString();
-		top = Number(parseValue(top).toFixed(2)).toString();
-		exp = Number(parseValue(exp).toFixed(2)).toString();
+		bal = Number(parseValue(bal)).toString();
+		top = Number(parseValue(top)).toString();
+		exp = Number(parseValue(exp)).toString();
 		log(bal);
 		log(top);
 		log(exp);
 	}
 	
-	// Workaround
-	Logout(session)
+	// Reset session id
+	await Logout(session)
 
 	return [bal, top, exp];
 }
@@ -217,71 +227,81 @@ async function createWidget() {
 	listWidget.addSpacer();
 
 	const stack = listWidget.addStack();
-
 	listWidget.addSpacer(12);
 
 	// BALANCE STACK
-	const balStack = stack.addStack();
-	balStack.layoutVertically();
-	balStack.topAlignContent();
+	var balStack;
+	if (Show_Balance === true) {
+		balStack = stack.addStack();
+		balStack.layoutVertically();
+		balStack.centerAlignContent();
+		stack.addSpacer();
+	}
 
-	stack.addSpacer();
-
-	// TOP STACK
-	const topStack = stack.addStack();
-	topStack.layoutVertically();
-	topStack.centerAlignContent();
-
-	stack.addSpacer();
+	// TOPUP STACK
+	var topStack;
+	if (Show_TopUp === true) {
+		topStack = stack.addStack();
+		topStack.layoutVertically();
+		topStack.centerAlignContent();
+		stack.addSpacer();
+	}
 
 	// EXPENSE STACK
-	const expStack = stack.addStack();
-	expStack.layoutVertically();
-	expStack.centerAlignContent();
+	var expStack;
+	if (Show_Expense === true) {
+		expStack = stack.addStack();
+		expStack.layoutVertically();
+		expStack.centerAlignContent();
+	} 
 
 	// Balance display
-	var balanceHeading = balStack.addText("💰 Balance");
-	balanceHeading.centerAlignText();
-	balanceHeading.font = Font.lightSystemFont(listtextSize);
-	balanceHeading.textColor = textColor;
+	if (Show_Balance === true) {
+		var balanceHeading = balStack.addText(BalanceText);
+		balanceHeading.centerAlignText();
+		balanceHeading.font = Font.lightSystemFont(listtextSize);
+		balanceHeading.textColor = textColor;
+		balStack.addSpacer(4);
 
-	balStack.addSpacer(4);
-
-	var balance = balStack.addText(bal);
-	balance.centerAlignText();
-	balance.font = Font.lightSystemFont(numberSize);
-	balance.textColor = balColor;
+		var balance = balStack.addText(bal);
+		balance.centerAlignText();
+		balance.font = Font.lightSystemFont(numberSize);
+		balance.textColor = balColor;
+	}
 
 	// Top up display
-	var topUpHeading = topStack.addText("📊 Top-Up");
-	topUpHeading.centerAlignText();
-	topUpHeading.font = Font.lightSystemFont(listtextSize);
-	topUpHeading.textColor = textColor;
+	if (Show_TopUp === true) {
+		var topUpHeading = topStack.addText(TopUpText);
+		topUpHeading.centerAlignText();
+		topUpHeading.font = Font.lightSystemFont(listtextSize);
+		topUpHeading.textColor = textColor;
+		topStack.addSpacer(4);
 
-	topStack.addSpacer(4);
+		var topUp = topStack.addText(top);
+		topUp.centerAlignText();
+		topUp.font = Font.lightSystemFont(numberSize);
+		topUp.textColor = topColor;
+	}
 
-	var topUp = topStack.addText(top);
-	topUp.centerAlignText();
-	topUp.font = Font.lightSystemFont(numberSize);
-	topUp.textColor = topColor;
+	// Expense display
+	if (Show_Expense === true) {
+		var expenseHeading = expStack.addText(ExpenseText);
+		expenseHeading.centerAlignText();
+		expenseHeading.font = Font.lightSystemFont(listtextSize);
+		expenseHeading.textColor = textColor;
+		expStack.addSpacer(4);
 
-	// expense display
-	var expenseHeading = expStack.addText("💸 Expense");
-	expenseHeading.centerAlignText();
-	expenseHeading.font = Font.lightSystemFont(listtextSize);
-	expenseHeading.textColor = textColor;
-
-	expStack.addSpacer(4);
-
-	var expense = expStack.addText(exp);
-	expense.centerAlignText();
-	expense.font = Font.lightSystemFont(numberSize);
-	expense.textColor = expColor;
+		var expense = expStack.addText(exp);
+		expense.centerAlignText();
+		expense.font = Font.lightSystemFont(numberSize);
+		expense.textColor = expColor;
+	}
 
 	// END OF MAIN
 	return listWidget;
 }
 
+// Init widget
 let widget = await createWidget();
 if (config.runsInWidget) {
 	Script.setWidget(widget);
