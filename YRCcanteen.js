@@ -4,7 +4,7 @@
 
 // IMPORTANT SETTINGS
 // Fill this out to use the widget!
-const username = "05000"; // your username here
+const username = "50000"; // your username here
 const password = "12345"; // your password here
 
 // Top bar text and customization
@@ -134,7 +134,7 @@ async function Logout(cookie) {
 	request.headers = {
 		"Cookie": `PHPSESSID=${cookie}`,
 	}
-// 	var response = await request.loadString();
+	var response = await request.loadString();
 // 	log(response);
 }
 
@@ -172,8 +172,12 @@ function parseValue(value) {
 // Balance info table
 async function getInfo() {
 	let [a, b, c] = await getCurrentPage();
-
+	
 	const session = c.cookies.find(cookie => cookie.name === "PHPSESSID").value;
+	
+	// Reset session id
+	await Logout(session)
+	
 	log(session);
 
 	if (a === 1) { // stict
@@ -193,9 +197,6 @@ async function getInfo() {
 		log(exp);
 	}
 	
-	// Reset session id
-	await Logout(session)
-
 	return [bal, top, exp];
 }
 
