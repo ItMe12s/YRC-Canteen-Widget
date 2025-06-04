@@ -3,7 +3,7 @@
 // icon-color: cyan; icon-glyph: magic;
 
 // IMPORTANT SETTINGS
-const username = "00000"; // your username here
+const username = "05000"; // your username here
 const password = "12345"; // your password here
 
 // URL AND API ENDPOINTS, change if yrc update in the future.
@@ -19,11 +19,11 @@ const LOGIN_API = "https://www.yupparaj.ac.th/canteen/api/login.php";
 const update_rate = 5;
 
 // Top Bar Text and customization
-const Title = "( ◑‿◑)ɔ┏🍟--🍔┑٩(^◡^ )";
-const SubText = "Original by Boatkungg | Modified by @sh1nxzql7";
+const Title = "💳";
+const SubText = "┬┴┬┴┤(·_├┬┴┬┴";
 
 // font size
-const titleSize = 24;
+const titleSize = 26;
 const subtextSize = 8;
 // text and display font size
 const listtextSize = 18;
@@ -125,7 +125,7 @@ async function Logout(cookie) {
 		"Cookie": `PHPSESSID=${cookie}`,
 	}
 	var response = await request.loadString();
-	log(response);
+	//log(response);
 }
 
 // good now
@@ -182,6 +182,9 @@ async function getInfo() {
 		log(top);
 		log(exp);
 	}
+	
+	// Workaround
+	Logout(session)
 
 	return [bal, top, exp];
 }
