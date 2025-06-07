@@ -5,7 +5,9 @@ const config = {
     username: "50000",
     password: "12345",
 
-    // Customizations
+    // 
     title: "YRC Canteen Widget",
     sub_text: "┬┴┬┴┤(·_├┬┴┬┴",
+
+
 }
